@@ -1,0 +1,50 @@
+name: Publish reviewed 0.1.0 preview
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/publish-preview.yml]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: publish-preview-0.1.0
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: macos-15
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Confirm reviewed source and successful CI
+        run: |
+          gh api repos/dmsznv-dot/tidyfolder/actions/runs/38631122759 > "$RUNNER_TEMP/reviewed-run.json"
+          python3 - "$RUNNER_TEMP/reviewed-run.json" <<'PY'
+          import json,sys
+          run=json.load(open(sys.argv[1]))
+          assert run['head_sha']=='80be942c2ce0fd555673bb02f46c528e8115a699'
+          assert run['status']=='completed' and run['conclusion']=='success'
+          PY
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: TidyFolder-preview-macOS
+          run-id: 38631122759
+          github-token: ${{ github.token }}
+          path: preview
+      - name: Verify the exact archives reviewed after downloading
+        working-directory: preview
+        run: |
+          shasum -a 256 -c SHA256SUMS
+          printf '%s\n' \
+            'e135d38abaf6ab258c90b5484c70f5cb3d3428d627ee7323ccdb599a858979bc  TidyFolder-0.1.0-macOS.zip' \
+            '54c1e0236b9d332f6d59fdef458ea02a9027000bd42ddf49578b527edd8aa948  TidyFolder-0.1.0-macOS.dmg' | shasum -a 256 -c -
+          ditto -x -k TidyFolder-0.1.0-macOS.zip extracted
+          EXPECTED_ARCH=universal ../scripts/verify-release.sh extracted/TidyFolder.app
+      - name: Publish reviewed preview
+        run: |
+          if gh release view v0.1.0 >/dev/null 2>&1; then
+            echo 'Release already exists; leaving existing attachments unchanged.'
+            exit 0
+          fi
+          gh release create v0.1.0 --target 80be942c2ce0fd555673bb02f46c528e8115a699 --prerelease --title 'TidyFolder 0.1.0 preview' --notes-file docs/preview-release-notes.md preview/TidyFolder-0.1.0-macOS.zip preview/TidyFolder-0.1.0-macOS.dmg preview/SHA256SUMS
