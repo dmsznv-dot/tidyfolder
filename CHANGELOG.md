@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 — Preview
+
+- Add a white and deep-purple filing-box app icon in macOS ICNS sizes, including Retina.
+- Package and validate the icon in every app bundle.
+- Display the bundle version in the sidebar.
+
 ## 0.1.0 — Preview
 
 - Native SwiftUI sorting, rule editor, preview, settings and history.

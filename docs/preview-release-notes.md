@@ -1,4 +1,6 @@
-TidyFolder 0.1.0 preview: native macOS organization with preview, custom rules, persistent history and Undo.
+TidyFolder 0.1.1 preview: native macOS organization with preview, custom rules, persistent history and Undo.
+
+New in 0.1.1: white and deep-purple filing-box icon, with native macOS and Retina sizes.
 
 Requires macOS 14+. Universal compilation includes arm64 and x86_64; local runtime checks cover Apple Silicon on macOS 15.7.1. Intel runtime remains unverified.
 

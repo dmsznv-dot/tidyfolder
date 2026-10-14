@@ -8,7 +8,7 @@ class ReleaseValidation(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.app = pathlib.Path(self.tmp.name) / 'TidyFolder.app'
         shutil.copytree(ROOT / 'dist/TidyFolder.app', self.app)
-        self.env = dict(os.environ, EXPECTED_ARCH=os.environ.get('EXPECTED_ARCH', 'arm64'), EXPECTED_VERSION='0.1.0', SIGNING_MODE='ad-hoc')
+        self.env = dict(os.environ, EXPECTED_ARCH=os.environ.get('EXPECTED_ARCH', 'arm64'), EXPECTED_VERSION='0.1.1', SIGNING_MODE='ad-hoc')
     def tearDown(self): self.tmp.cleanup()
     def run_check(self):
         return subprocess.run([str(ROOT / 'scripts/verify-release.sh'), str(self.app)], env=self.env, capture_output=True, text=True)
@@ -23,6 +23,8 @@ class ReleaseValidation(unittest.TestCase):
     def test_valid_bundle(self): self.assertEqual(self.run_check().returncode, 0)
     def test_missing_executable(self):
         (self.app / 'Contents/MacOS/TidyFolder').unlink(); self.rejected('executable')
+    def test_missing_icon(self):
+        (self.app / "Contents/Resources/AppIcon.icns").unlink(missing_ok=True); self.rejected("icon")
     def test_missing_localization(self):
         shutil.rmtree(self.app / 'Contents/Resources/ru.lproj'); self.rejected('localization')
     def test_wrong_identifier(self): self.plist('CFBundleIdentifier', 'wrong'); self.rejected('identifier')

@@ -46,14 +46,14 @@ jobs:
       - name: Build and package
         run: |
           ./scripts/build-app.sh universal
-          ./scripts/package-release.sh 0.1.0
+          ./scripts/package-release.sh 0.1.1
       - name: Create draft for artifact review
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           tag="${GITHUB_REF_NAME}"
-          [[ "$tag" == v0.1.0 ]] || { echo 'Select the v0.1.0 tag; update app metadata for future versions.' >&2; exit 2; }
-          gh release create "$tag" --verify-tag --draft --prerelease --title 'TidyFolder 0.1.0 preview' --notes-file docs/preview-release-notes.md dist/*.zip dist/*.dmg dist/SHA256SUMS
+          [[ "$tag" == v0.1.1 ]] || { echo 'Select the v0.1.1 tag; update app metadata for future versions.' >&2; exit 2; }
+          gh release create "$tag" --verify-tag --draft --prerelease --title 'TidyFolder 0.1.1 preview' --notes-file docs/preview-release-notes.md dist/*.zip dist/*.dmg dist/SHA256SUMS
       - name: Remove temporary signing material
         if: always() && inputs.signed == true
         run: |

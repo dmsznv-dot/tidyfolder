@@ -26,6 +26,9 @@ if [ "$arch" = universal ]; then
 else
   cp "${binaries[0]}" "$app/Contents/MacOS/TidyFolder"
 fi
+./scripts/build-icon.sh
+cp dist/AppIcon.icns "$app/Contents/Resources/AppIcon.icns"
+cp Resources/AppIcon.png "$app/Contents/Resources/AppIcon.png"
 cp Resources/Info.plist "$app/Contents/Info.plist"
 cp -R Resources/en.lproj Resources/ru.lproj "$app/Contents/Resources/"
 if [ "$mode" = developer-id ]; then

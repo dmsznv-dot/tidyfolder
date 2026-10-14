@@ -26,7 +26,7 @@ jobs:
           EXPECTED_ARCH: universal
         run: python3 scripts/test-release.py
       - name: Preview distribution
-        run: ./scripts/package-release.sh 0.1.0
+        run: ./scripts/package-release.sh 0.1.1
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: TidyFolder-preview-macOS

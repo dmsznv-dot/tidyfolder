@@ -4,7 +4,7 @@
 
 [Скачать](https://github.com/dmsznv-dot/tidyfolder/releases) · [English](README.md) · [Совместимость с оригиналом](docs/compatibility.md)
 
-Первая версия — **0.1.0 preview**. Это самостоятельная реализация; проект не связан с Folder Tidy и Tunabelly Software. Закрытые алгоритмы оригинала не позволяют обещать полное совпадение классификации всех файлов.
+Первая версия — **0.1.1 preview**. Это самостоятельная реализация; проект не связан с Folder Tidy и Tunabelly Software. Закрытые алгоритмы оригинала не позволяют обещать полное совпадение классификации всех файлов.
 
 Нужна macOS 14+. Универсальная сборка содержит Apple Silicon и Intel; запуск локально проверен на Apple Silicon с macOS 15.7.1. Предварительная сборка имеет ad-hoc подпись, **без нотариализации Apple**; Gatekeeper может заблокировать загруженное приложение. Для обычного подписанного выпуска нужны учётные данные Apple Developer владельца проекта.
 
@@ -16,7 +16,7 @@
 ./scripts/swift.sh test --no-parallel
 ./scripts/build-app.sh universal
 EXPECTED_ARCH=universal python3 scripts/test-release.py
-./scripts/package-release.sh 0.1.0
+./scripts/package-release.sh 0.1.1
 ```
 
 Для разработки нужен Swift 6.2+. Поддерживаются Xcode и Command Line Tools. Подробности сборки, подписи и ограничений — в [English README](README.md), [проверках интерфейса](docs/manual-qa.md) и [чек-листе выпуска](docs/release-checklist.md). Лицензия MIT.

@@ -5,6 +5,7 @@ import TidyCore
 
 @MainActor @Observable final class AppModel {
     enum Section: String, CaseIterable { case sort, rules, history }
+    var appIcon: NSImage?
     var section: Section = .sort
     var settings = AppSettings()
     var plan: TidyPlan?
@@ -41,6 +42,10 @@ import TidyCore
     }
     func bootstrap() async {
         guard !bootstrapped else { return }; bootstrapped = true
+        if let iconURL = Bundle.main.url(forResource: "AppIcon", withExtension: "png"), let icon = NSImage(contentsOf: iconURL) {
+            appIcon = icon
+            NSApp.applicationIconImage = icon
+        }
         defer { loading = false }
         do {
             settings = try await store.load()
