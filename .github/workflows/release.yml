@@ -1,0 +1,61 @@
+name: Draft macOS release
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      signed:
+        type: boolean
+        default: false
+        description: Sign and notarize with configured Developer ID secrets
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: macos-15
+    timeout-minutes: 40
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: ./scripts/swift.sh test --no-parallel
+      - name: Import signing credentials when explicitly requested
+        if: inputs.signed == true
+        env:
+          CERTIFICATE_BASE64: ${{ secrets.DEVELOPER_ID_CERTIFICATE_BASE64 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.DEVELOPER_ID_CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.BUILD_KEYCHAIN_PASSWORD }}
+          APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.NOTARY_APP_PASSWORD }}
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          SIGNING_IDENTITY: ${{ secrets.SIGNING_IDENTITY }}
+        run: |
+          set -euo pipefail
+          : "${CERTIFICATE_BASE64:?}" "${CERTIFICATE_PASSWORD:?}" "${KEYCHAIN_PASSWORD:?}" "${APPLE_ID:?}" "${APPLE_PASSWORD:?}" "${TEAM_ID:?}" "${SIGNING_IDENTITY:?}"
+          printf '%s' "$CERTIFICATE_BASE64" | base64 --decode > "$RUNNER_TEMP/certificate.p12"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$RUNNER_TEMP/build.keychain-db"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$RUNNER_TEMP/build.keychain-db"
+          security set-keychain-settings -lut 21600 "$RUNNER_TEMP/build.keychain-db"
+          security import "$RUNNER_TEMP/certificate.p12" -P "$CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$RUNNER_TEMP/build.keychain-db"
+          security list-keychains -d user -s "$RUNNER_TEMP/build.keychain-db"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$RUNNER_TEMP/build.keychain-db"
+          xcrun notarytool store-credentials TidyFolder --apple-id "$APPLE_ID" --password "$APPLE_PASSWORD" --team-id "$TEAM_ID" --keychain "$RUNNER_TEMP/build.keychain-db"
+          echo 'SIGNING_MODE=developer-id' >> "$GITHUB_ENV"
+          echo "SIGNING_IDENTITY=$SIGNING_IDENTITY" >> "$GITHUB_ENV"
+          echo 'NOTARY_PROFILE=TidyFolder' >> "$GITHUB_ENV"
+      - name: Build and package
+        run: |
+          ./scripts/build-app.sh universal
+          ./scripts/package-release.sh 0.1.0
+      - name: Create draft for artifact review
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          [[ "$tag" == v0.1.0 ]] || { echo 'Select the v0.1.0 tag; update app metadata for future versions.' >&2; exit 2; }
+          gh release create "$tag" --verify-tag --draft --prerelease --title 'TidyFolder 0.1.0 preview' --notes-file docs/preview-release-notes.md dist/*.zip dist/*.dmg dist/SHA256SUMS
+      - name: Remove temporary signing material
+        if: always() && inputs.signed == true
+        run: |
+          security delete-keychain "$RUNNER_TEMP/build.keychain-db" || true
+          rm -f "$RUNNER_TEMP/certificate.p12"

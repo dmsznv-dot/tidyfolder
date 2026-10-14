@@ -1,0 +1,3 @@
+// swift-tools-version: 6.2
+import PackageDescription
+let package = Package(name: "TidyFolder", platforms: [.macOS(.v14)], products: [.library(name: "TidyCore", targets: ["TidyCore"]), .executable(name: "TidyHarness", targets: ["TidyHarness"]), .executable(name: "TidyFolder", targets: ["TidyFolderApp"])], targets: [.systemLibrary(name: "CSQLite"), .target(name: "TidyCore", dependencies: ["CSQLite"]), .executableTarget(name: "TidyHarness", dependencies: ["TidyCore"]), .executableTarget(name: "TidyFolderApp", dependencies: ["TidyCore"]), .testTarget(name: "TidyCoreTests", dependencies: ["TidyCore", "CSQLite"])])

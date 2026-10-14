@@ -1,0 +1,7 @@
+.build/
+.build-active/
+.build-working/
+dist/
+.superpowers/
+.DS_Store
+*.xcuserstate

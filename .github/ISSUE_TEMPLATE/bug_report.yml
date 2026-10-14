@@ -1,0 +1,14 @@
+name: Bug report
+description: Report a reproducible TidyFolder issue
+body:
+  - type: textarea
+    attributes:
+      label: What happened?
+      description: Include expected behavior and steps on a disposable folder. Do not attach private files or unredacted paths.
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: TidyFolder version, macOS version and processor
+    validations:
+      required: true
