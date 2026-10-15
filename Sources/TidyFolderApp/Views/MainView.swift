@@ -11,7 +11,7 @@ struct MainView: View {
                     Label(model.tr("Rules", "Правила"), systemImage: "line.3.horizontal.decrease.circle").tag(AppModel.Section.rules)
                     Label(model.tr("History", "История"), systemImage: "clock.arrow.circlepath").tag(AppModel.Section.history)
                 }.listStyle(.sidebar)
-                HStack(spacing: 8) { Image(nsImage: model.appIcon ?? NSApp.applicationIconImage).resizable().frame(width: 28, height: 28); VStack(alignment: .leading, spacing: 2) { Text("TidyFolder").fontWeight(.semibold); Text(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.1.1").font(.caption).foregroundStyle(.secondary) }; Spacer() }.padding(16)
+                HStack(spacing: 8) { Image(nsImage: model.appIcon ?? NSApp.applicationIconImage).resizable().frame(width: 28, height: 28); VStack(alignment: .leading, spacing: 2) { Text("TidyFolder").fontWeight(.semibold); Text(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.1.2").font(.caption).foregroundStyle(.secondary) }; Spacer() }.padding(16)
             }.navigationSplitViewColumnWidth(min: 180, ideal: 205, max: 250)
         } detail: {
             VStack(spacing: 0) {

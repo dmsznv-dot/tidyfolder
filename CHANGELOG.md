@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2 — 2026-10-15
+- Fixed options and exclusions expanding beyond the available window height and blanking the interface.
+- Added bounded scrolling while keeping preview and action controls visible.
+- Refined app icon with native Dock proportions, rounded corners, and a subtle metallic rim.
+
 ## 0.1.1 — Preview
 
 - Add a white and deep-purple filing-box app icon in macOS ICNS sizes, including Retina.

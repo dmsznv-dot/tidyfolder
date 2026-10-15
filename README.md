@@ -4,7 +4,7 @@ A native macOS file organizer written in Swift 6.2, SwiftUI and AppKit. Preview 
 
 [Русская документация](README.ru.md) · [Downloads](https://github.com/dmsznv-dot/tidyfolder/releases) · [Compatibility](docs/compatibility.md)
 
-The first distribution is a **0.1.1 preview**. It is independently implemented and is not affiliated with Folder Tidy or Tunabelly Software. Visible category names were checked against the original; proprietary matching predicates have not been reproduced or verified exhaustively.
+The first distribution is a **0.1.2 preview**. It is independently implemented and is not affiliated with Folder Tidy or Tunabelly Software. Visible category names were checked against the original; proprietary matching predicates have not been reproduced or verified exhaustively.
 
 Requires macOS 14 or newer. Universal packaging supports Apple Silicon and Intel; local runtime verification covers Apple Silicon on macOS 15.7.1. The preview uses ad-hoc signing and is **not Apple notarized**. Gatekeeper may block downloaded copies. A Developer ID signed, notarized release requires the maintainer's Apple Developer credentials.
 
@@ -16,7 +16,7 @@ No application network access, telemetry or third-party runtime dependencies. Pr
 ./scripts/swift.sh test --no-parallel
 ./scripts/build-app.sh universal
 EXPECTED_ARCH=universal python3 scripts/test-release.py
-./scripts/package-release.sh 0.1.1
+./scripts/package-release.sh 0.1.2
 ```
 
 Swift 6.2+ is required. Full Xcode and Command Line Tools are supported; the wrapper selects project-local caches and supplies Swift Testing framework paths on CLT. Universal binaries are compiled separately and combined with `lipo`, so full Xcode is not required for compilation. DMG creation needs macOS disk-image services.

@@ -8,7 +8,7 @@ app = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else 'dist/TidyFolder.app')
 try: metadata = plistlib.loads((app/'Contents/Info.plist').read_bytes())
 except Exception: fail('missing or invalid Info.plist')
 if metadata.get('CFBundleIdentifier') != 'io.github.dmsznv-dot.tidyfolder': fail('wrong bundle identifier')
-if metadata.get('CFBundleShortVersionString') != os.environ.get('EXPECTED_VERSION','0.1.1'): fail('wrong bundle version')
+if metadata.get('CFBundleShortVersionString') != os.environ.get('EXPECTED_VERSION','0.1.2'): fail('wrong bundle version')
 if metadata.get('LSMinimumSystemVersion') != '14.0': fail('wrong minimum macOS version')
 binary = app/'Contents/MacOS/TidyFolder'
 if metadata.get('CFBundleExecutable') != 'TidyFolder' or not binary.is_file() or not os.access(binary,os.X_OK): fail('missing executable')

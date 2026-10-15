@@ -4,7 +4,10 @@ struct SortView: View {
     @Bindable var model: AppModel
     @State private var optionsExpanded = false
     var body: some View {
+        // Bound the expandable header so its intrinsic height cannot overflow the window.
+        GeometryReader { geometry in
         VStack(alignment: .leading, spacing: 0) {
+            ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 8) { Text(model.tr("A place for every file.", "Каждому файлу — своё место.")).font(.system(size: 29, weight: .semibold)); Text(model.tr("Choose a folder, review the plan, and bring a little order.", "Выберите папку, проверьте план и наведите порядок.")).foregroundStyle(.secondary) }
@@ -17,7 +20,8 @@ struct SortView: View {
                 }.disabled(model.busy)
                 HStack { Toggle(model.tr("Include subfolders", "Включить подпапки"), isOn: $model.settings.scanOptions.recursive).toggleStyle(.checkbox); Spacer(); Button(model.tr("Use source as destination", "Сортировать в исходной папке")) { model.settings.destinationURL = model.settings.sourceURL }.buttonStyle(.link).disabled(model.settings.sourceURL == nil) }.disabled(model.busy)
                 DisclosureGroup(model.tr("Options & exclusions", "Настройки и исключения"), isExpanded: $optionsExpanded) { ScanOptionsView(model: model).padding(.top, 12) }.font(.callout).disabled(model.busy)
-            }.padding(28)
+            }.padding(28).frame(maxWidth: .infinity, alignment: .leading)
+            }.frame(height: min(optionsExpanded ? 520 : 360, geometry.size.height * (optionsExpanded ? 0.78 : 0.62)))
             Divider()
             if model.busy {
                 VStack(spacing: 12) { ProgressView(value: Double(model.processed), total: Double(max(1, model.total))); Text(model.currentFile.isEmpty ? model.tr("Working…", "Обработка…") : model.currentFile).font(.caption).foregroundStyle(.secondary); Button(model.tr("Cancel", "Отменить")) { Task { await model.cancel() } } }.padding(30).frame(maxHeight: .infinity)
@@ -30,6 +34,7 @@ struct SortView: View {
             Divider()
             HStack { Button { model.section = .rules } label: { Label(model.tr("\(model.settings.rules.filter(\.enabled).count) active rules", "Активных правил: \(model.settings.rules.filter(\.enabled).count)"), systemImage: "slider.horizontal.3") }.buttonStyle(.plain).foregroundStyle(.secondary); Spacer(); Button(model.tr("Preview", "Предпросмотр")) { Task { await model.preview() } }.disabled(!model.canPreview); Button(model.tr("Organize", "Сортировать")) { Task { await model.sort() } }.buttonStyle(.borderedProminent).disabled(!model.canSort).keyboardShortcut(.defaultAction) }.padding(18)
         }.background(Color(nsColor: .windowBackgroundColor))
+        }
     }
 }
 
